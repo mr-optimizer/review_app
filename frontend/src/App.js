@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment } from "react";
+import { Route, Routes } from "react-router-dom";
 
-function App() {
+import Navbar from "./components/Navbar";
+import Home from "./components/Home";
+import SignIn from "./components/auth/SignIn";
+import SignUp from "./components/auth/SignUp";
+import EmailVerification from "./components/auth/EmailVerification";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ConfirmPassword from "./components/auth/ConfirmPassword";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/auth/sign-in" element={<SignIn />} />
+        <Route path="/auth/sign-up" element={<SignUp />} />
+        <Route path="/auth/verification" element={<EmailVerification />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/confirm-password" element={<ConfirmPassword />} />
+      </Routes>
+    </Fragment>
   );
 }
-
-export default App;
