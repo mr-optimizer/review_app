@@ -4,17 +4,19 @@ import FormInput from "../form/FormInput";
 import Submit from "../form/Submit";
 import Title from "./../form/Title";
 import CustomLink from "../CustomLink";
+import { commonModelClasses } from "../../utils/theme";
+import { FormContainer } from "../form/FormContainer";
 
 export default function SignUp() {
   return (
-    <div className="fixed inset-0 bg-primary -z-10  flex justify-center items-center">
+    <FormContainer>
       <Container>
-        <form action="" className=" bg-secondary rounded p-6 w-72 space-y-4">
+        <form action="" className={commonModelClasses + " w-72"}>
           <Title>Sign up</Title>
           <FormInput label="Name" placeholder="Shubham Kumar" name="name" />
           <FormInput
             label="Email"
-            placeholder="shubham@gmailcom"
+            placeholder="shubham@gmail.com"
             name="email"
           />
           <FormInput
@@ -29,6 +31,6 @@ export default function SignUp() {
           </div>
         </form>
       </Container>
-    </div>
+    </FormContainer>
   );
 }

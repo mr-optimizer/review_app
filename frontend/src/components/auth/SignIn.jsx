@@ -4,13 +4,17 @@ import CustomLink from "../CustomLink";
 import FormInput from "../form/FormInput";
 import Submit from "../form/Submit";
 import Title from "./../form/Title";
+import { useTheme } from "../../hooks/customHooks";
+import { commonModelClasses } from "../../utils/theme";
+import { FormContainer } from "../form/FormContainer";
 export default function SignIn() {
+  const theme = useTheme();
   return (
-    <div className="fixed inset-0 bg-primary -z-10  flex justify-center items-center">
+    <FormContainer>
       <Container>
-        <form action="" className=" bg-secondary rounded p-6 w-72 space-y-4">
+        <form action="" className={commonModelClasses + " w-72"}>
           <Title>Sign in</Title>
-          <FormInput label="Email" placeholder="abcd@gmailcom" name="email" />
+          <FormInput label="Email" placeholder="abcd@gmail.com" name="email" />
           <FormInput
             label="Password"
             placeholder="**************"
@@ -23,6 +27,6 @@ export default function SignIn() {
           </div>
         </form>
       </Container>
-    </div>
+    </FormContainer>
   );
 }
