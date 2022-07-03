@@ -5,7 +5,7 @@ import { useTheme } from "../hooks/customHooks";
 import Container from "./Container";
 
 export default function Navbar() {
-  const {toggleTheme} = useTheme();
+  const {toggleTheme} = useTheme();  //custom hook to change theme
   return (
     <div className=" bg-secondary shadow-sm shadow-gray-500">
       <Container className=" p-2">

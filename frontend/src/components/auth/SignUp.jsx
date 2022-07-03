@@ -8,9 +8,10 @@ import CustomLink from "../CustomLink";
 import { commonModelClasses } from "../../utils/theme";
 import { FormContainer } from "../form/FormContainer";
 import { createUser } from "../../api/auth";
+import { useNotification } from "../../hooks/customHooks";
 
 const validateUserInfo = ({ name, email, password }) => {
-  const isValidEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const isValidEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   const isValidName = /^[a-z A-Z]+$/;
   if (!name.trim()) return { ok: false, error: "Name is missing!!" };
   if (!isValidName.test(name)) return { ok: false, error: "Name is Invalid!!" };
@@ -23,6 +24,7 @@ const validateUserInfo = ({ name, email, password }) => {
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const { updateNotification } = useNotification();
   const [userInfo, setUserinfo] = useState({
     name: "",
     email: "",
@@ -36,9 +38,9 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { ok, error } = validateUserInfo(userInfo);
-    if (!ok) return console.log(error);
+    if (!ok) return updateNotification('error', error);
     const { error: err, data } = await createUser(userInfo);
-    if (err) return console.log(err);
+    if (err) return updateNotification('error' ,err);
     navigate("/auth/verification", {
       state: { user: data.user },
       replace: true,

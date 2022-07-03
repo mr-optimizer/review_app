@@ -6,12 +6,15 @@ import "./index.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeProvider";
+import { NotificationProvider } from "./context/NotificationProvider";
 
 ReactDOM.render(
   <BrowserRouter>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <NotificationProvider>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </NotificationProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );

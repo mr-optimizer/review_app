@@ -1,5 +1,7 @@
-import React, { useState , useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { verifyUserEmail } from "../../api/auth";
+import { useNotification } from "../../hooks/customHooks";
 import { commonModelClasses } from "../../utils/theme";
 import Container from "../Container";
 import { FormContainer } from "../form/FormContainer";
@@ -8,20 +10,27 @@ import Title from "./../form/Title";
 
 const OPT_LENGTH = 6;
 let currentOTPIndex;
+const isValidOTP = (otp) => {
+  for (let val of otp) {
+    if (isNaN(parseInt(val))) return false;
+  }
+  return true;
+};
 export default function EmailVerification() {
   const [otp, setOpt] = useState(new Array(OPT_LENGTH).fill(""));
   const [activeOtpIndex, setActiveOtpIndex] = useState(0);
 
   const inputRef = useRef();
   const navigate = useNavigate();
-  const {state} = useLocation();
-  const user = state?.user; 
+  const { updateNotification } = useNotification();
+  const { state } = useLocation();
+  const user = state?.user;
   useEffect(() => {
     inputRef.current?.focus();
   }, [activeOtpIndex]);
-  useEffect(()=>{
-    if(!user)navigate('/not-found')
-  },[user])
+  useEffect(() => {
+    if (!user) navigate("/not-found");
+  }, [user, navigate]);
 
   const focusNextInputField = (index) => {
     setActiveOtpIndex(index + 1);
@@ -47,10 +56,22 @@ export default function EmailVerification() {
       focusPrevInputField(currentOTPIndex);
     }
   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isValidOTP(otp)) {
+      return updateNotification('error' ,"Invalid OTP!!");
+    }
+    const { error, data } = await verifyUserEmail({
+      OTP: otp.join(""),
+      userId: user.id,
+    });
+    if (error) return updateNotification('error', error);
+    updateNotification('success' ,data?.message);
+  };
   return (
     <FormContainer>
       <Container>
-        <form action="" className={commonModelClasses}>
+        <form onSubmit={handleSubmit} className={commonModelClasses}>
           <div>
             <Title>Please Enter OPT to verify your account</Title>
             <p className="text-center dark:text-dark-subtle text-light-subtle">
@@ -72,7 +93,7 @@ export default function EmailVerification() {
               );
             })}
           </div>
-          <Submit value="Send Link" />
+          <Submit value="Verify Account" />
         </form>
       </Container>
     </FormContainer>
