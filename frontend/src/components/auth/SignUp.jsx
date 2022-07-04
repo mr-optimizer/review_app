@@ -39,10 +39,10 @@ export default function SignUp() {
     e.preventDefault();
     const { ok, error } = validateUserInfo(userInfo);
     if (!ok) return updateNotification('error', error);
-    const { error: err, data } = await createUser(userInfo);
+    const { error: err, user } = await createUser(userInfo);
     if (err) return updateNotification('error' ,err);
     navigate("/auth/verification", {
-      state: { user: data.user },
+      state: { user: user },
       replace: true,
     });
   };

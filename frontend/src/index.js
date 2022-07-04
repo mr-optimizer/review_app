@@ -5,16 +5,13 @@ import "./index.css";
 // import './style.css';
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./context/ThemeProvider";
-import { NotificationProvider } from "./context/NotificationProvider";
+import { ContextProvider } from "./context/Index";
 
 ReactDOM.render(
   <BrowserRouter>
-    <NotificationProvider>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </NotificationProvider>
+    <ContextProvider>
+      <App />
+    </ContextProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );

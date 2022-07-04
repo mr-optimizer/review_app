@@ -61,12 +61,12 @@ export default function EmailVerification() {
     if (!isValidOTP(otp)) {
       return updateNotification('error' ,"Invalid OTP!!");
     }
-    const { error, data } = await verifyUserEmail({
+    const { error, message } = await verifyUserEmail({
       OTP: otp.join(""),
       userId: user.id,
     });
     if (error) return updateNotification('error', error);
-    updateNotification('success' ,data?.message);
+    updateNotification('success' , message);
   };
   return (
     <FormContainer>
