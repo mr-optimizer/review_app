@@ -8,7 +8,8 @@ import CustomLink from "../CustomLink";
 import { commonModelClasses } from "../../utils/theme";
 import { FormContainer } from "../form/FormContainer";
 import { createUser } from "../../api/auth";
-import { useNotification } from "../../hooks/customHooks";
+import { useAuth, useNotification } from "../../hooks/customHooks";
+import { useEffect } from "react";
 
 const validateUserInfo = ({ name, email, password }) => {
   const isValidEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -25,11 +26,18 @@ const validateUserInfo = ({ name, email, password }) => {
 export default function SignUp() {
   const navigate = useNavigate();
   const { updateNotification } = useNotification();
+  const { authInfo } = useAuth();
+  const { isLoggedIn } = authInfo;
   const [userInfo, setUserinfo] = useState({
     name: "",
     email: "",
     password: "",
   });
+  
+  useEffect(() => {
+    if (isLoggedIn) navigate("/");
+  }, [isLoggedIn, navigate]);
+
   const { name, email, password } = userInfo;
   const handleChange = ({ target }) => {
     const { value, name } = target;
@@ -38,9 +46,9 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { ok, error } = validateUserInfo(userInfo);
-    if (!ok) return updateNotification('error', error);
+    if (!ok) return updateNotification("error", error);
     const { error: err, user } = await createUser(userInfo);
-    if (err) return updateNotification('error' ,err);
+    if (err) return updateNotification("error", err);
     navigate("/auth/verification", {
       state: { user: user },
       replace: true,

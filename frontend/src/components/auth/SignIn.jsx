@@ -7,6 +7,8 @@ import Title from "./../form/Title";
 import { commonModelClasses } from "../../utils/theme";
 import { FormContainer } from "../form/FormContainer";
 import { useAuth, useNotification } from "../../hooks/customHooks";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const validateUserInfo = ({ email, password }) => {
   const isValidEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -23,9 +25,15 @@ export default function SignIn() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const { updateNotification } = useNotification();
   const { handleLogin, authInfo } = useAuth();
-  const {isPending} = authInfo;
+  const { isPending, isLoggedIn } = authInfo;
+
+  useEffect(()=>{
+    if(isLoggedIn)navigate('/');
+  }, [isLoggedIn, navigate])
+  
   const handleChange = ({ target }) => {
     const { value, name } = target;
     setUserinfo({ ...userInfo, [name]: value });
@@ -36,6 +44,7 @@ export default function SignIn() {
     if (!ok) return updateNotification("error", error);
     handleLogin(userInfo.email, userInfo.password);
   };
+
   return (
     <FormContainer>
       <Container>

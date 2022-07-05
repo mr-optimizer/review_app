@@ -1,11 +1,13 @@
 import React from "react";
 import { BsFillSunFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { useTheme } from "../hooks/customHooks";
+import { useAuth, useTheme } from "../hooks/customHooks";
 import Container from "./Container";
 
 export default function Navbar() {
-  const {toggleTheme} = useTheme();  //custom hook to change theme
+  const { toggleTheme } = useTheme(); //custom hook to change theme
+  const { authInfo, handleLogOut } = useAuth();
+  const { isLoggedIn } = authInfo;
   return (
     <div className=" bg-secondary shadow-sm shadow-gray-500">
       <Container className=" p-2">
@@ -15,7 +17,10 @@ export default function Navbar() {
           </Link>
           <ul className="flex items-center space-x-4">
             <l1>
-              <button onClick={toggleTheme} className="dark:bg-white bg-dark-subtle p-1 rounded">
+              <button
+                onClick={toggleTheme}
+                className="dark:bg-white bg-dark-subtle p-1 rounded"
+              >
                 <BsFillSunFill className="text-secondary" size={24} />
               </button>
             </l1>
@@ -27,7 +32,21 @@ export default function Navbar() {
               />
             </li>
             <li className="font-semibold text-lg text-white">
-              <Link to="/auth/sign-in">Log-in</Link>
+              {isLoggedIn ? (
+                <button
+                  onClick={handleLogOut}
+                  className=" text-white font-semibold text-lg"
+                >
+                  Log out
+                </button>
+              ) : (
+                <Link
+                  className=" text-white font-semibold text-lg"
+                  to="/auth/sign-in"
+                >
+                  Log-in
+                </Link>
+              )}
             </li>
           </ul>
         </div>
