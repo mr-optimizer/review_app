@@ -10,13 +10,13 @@ import { FormContainer } from "../form/FormContainer";
 import { createUser } from "../../api/auth";
 import { useAuth, useNotification } from "../../hooks/customHooks";
 import { useEffect } from "react";
+import { isValidEmail } from "../../utils/helper";
 
 const validateUserInfo = ({ name, email, password }) => {
-  const isValidEmail = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
   const isValidName = /^[a-z A-Z]+$/;
   if (!name.trim()) return { ok: false, error: "Name is missing!!" };
   if (!isValidName.test(name)) return { ok: false, error: "Name is Invalid!!" };
-  if (!isValidEmail.test(email)) return { ok: false, error: "Invalid Email!!" };
+  if (!isValidEmail(email)) return { ok: false, error: "Invalid Email!!" };
   if (!password.trim()) return { ok: false, error: "Password is missing!!" };
   if (password.length < 8)
     return { ok: false, error: "Password must be 8 characters long!! " };
@@ -33,7 +33,7 @@ export default function SignUp() {
     email: "",
     password: "",
   });
-  
+
   useEffect(() => {
     if (isLoggedIn) navigate("/");
   }, [isLoggedIn, navigate]);

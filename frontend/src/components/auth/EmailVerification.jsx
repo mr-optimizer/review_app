@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { verifyUserEmail } from "../../api/auth";
-import { useNotification } from "../../hooks/customHooks";
+import { resendEmailVerificationToken, verifyUserEmail } from "../../api/auth";
+import { useAuth, useNotification } from "../../hooks/customHooks";
 import { commonModelClasses } from "../../utils/theme";
 import Container from "../Container";
 import { FormContainer } from "../form/FormContainer";
@@ -24,13 +24,17 @@ export default function EmailVerification() {
   const navigate = useNavigate();
   const { updateNotification } = useNotification();
   const { state } = useLocation();
+  const { isAuth, authInfo } = useAuth();
+  const { isLoggedIn, profile } = authInfo;
+  const isVerified = profile?.isVerified;
   const user = state?.user;
   useEffect(() => {
     inputRef.current?.focus();
   }, [activeOtpIndex]);
   useEffect(() => {
     if (!user) navigate("/not-found");
-  }, [user, navigate]);
+    if (isLoggedIn && isVerified) navigate("/");
+  }, [user, isLoggedIn, isVerified ,navigate]);
 
   const focusNextInputField = (index) => {
     setActiveOtpIndex(index + 1);
@@ -56,18 +60,32 @@ export default function EmailVerification() {
       focusPrevInputField(currentOTPIndex);
     }
   };
+  const handleOtpResend = async() => {
+    const {error, message} = await resendEmailVerificationToken(user.id)
+    if(error) return updateNotification('error', error);
+    updateNotification('success', message);
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidOTP(otp)) {
-      return updateNotification('error' ,"Invalid OTP!!");
+      return updateNotification("error", "Invalid OTP!!");
     }
-    const { error, message } = await verifyUserEmail({
+    const {
+      error,
+      message,
+      user: userResponse,
+    } = await verifyUserEmail({
       OTP: otp.join(""),
       userId: user.id,
     });
-    if (error) return updateNotification('error', error);
-    updateNotification('success' , message);
+    if (error) return updateNotification("error", error);
+    updateNotification("success", message);
+    console.log(userResponse.token);
+    localStorage.setItem("auth-token", userResponse.token);
+    isAuth();
+    navigate("/");
   };
+
   return (
     <FormContainer>
       <Container>
@@ -93,7 +111,10 @@ export default function EmailVerification() {
               );
             })}
           </div>
+          <div>
           <Submit value="Verify Account" />
+          <button onClick={handleOtpResend} type="button" className="dark:text-white text-blue-500 font-semibold hover:underline mt-2">I don't have OTP</button>
+          </div>
         </form>
       </Container>
     </FormContainer>

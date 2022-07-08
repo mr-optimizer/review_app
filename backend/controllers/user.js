@@ -58,18 +58,17 @@ exports.signInUser = async (req, res) => {
   if (!isMatched) {
     return sendError(res, "Password is Invalid");
   }
-  const { _id, name } = user;
+  const { _id, name, isVerified } = user;
   //   signing Json web token to logged in user
   const jwtToken = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE_TIME,
   });
 
-  res.json({ user: { id: _id, name, email, token: jwtToken } });
+  res.json({ user: { id: _id, name, email, token: jwtToken, isVerified } });
 };
 
 exports.verifyEmail = async (req, res) => {
   const { userId, OTP } = req.body;
-
   if (!isValidObjectId(userId)) {
     return sendError(res, "Invalid User!!");
   }
@@ -112,6 +111,7 @@ exports.verifyEmail = async (req, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
+      isVerified: user.isVerified,
     },
     message: "Your email is Verified",
   });
@@ -141,8 +141,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
     token: OTP,
   });
 
-  await newEmailVerificationToken.save();
-
+  const result = await newEmailVerificationToken.save();
   // sending OTP to user email
   var transport = generateMailTransporter();
   transport.sendMail({
@@ -180,7 +179,7 @@ exports.forgotPassword = async (req, res) => {
   });
   await newPasswordResetToken.save();
 
-  const passwordResetUrl = `http://localhost:3000/reset-password?token=${token}&id=${user._id}`;
+  const passwordResetUrl = `http://localhost:3000/auth/reset-password?token=${token}&id=${user._id}`;
 
   // sending passwordReset url to user email
   var transport = generateMailTransporter();
