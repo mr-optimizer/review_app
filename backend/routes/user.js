@@ -3,26 +3,39 @@ const {
   create,
   verifyEmail,
   resendEmailVerificationToken,
-  forgotPassword,
-  sendPasswordResetTokenStatus,
+  forgetPassword,
+  sendResetPasswordTokenStatus,
   resetPassword,
-  signInUser,
+  signIn,
 } = require("../controllers/user");
+const { isAuth } = require("../middlewares/auth");
+const { isValidPassResetToken } = require("../middlewares/user");
 const {
+  userValidtor,
   validate,
-  userValidator,
   validatePassword,
   signInValidator,
-} = require("../middleware/validator");
-const { isValidPasswordResetToken } = require("../middleware/user");
-const { isAuth } = require("../middleware/auth");
+} = require("../middlewares/validator");
 
 const router = express.Router();
 
-router.post("/create", userValidator, validate, create);
-router.post("/sign-in", signInValidator, validate, signInUser);
+router.post("/create", userValidtor, validate, create);
+router.post("/sign-in", signInValidator, validate, signIn);
 router.post("/verify-email", verifyEmail);
 router.post("/resend-email-verification-token", resendEmailVerificationToken);
+router.post("/forget-password", forgetPassword);
+router.post(
+  "/verify-pass-reset-token",
+  isValidPassResetToken,
+  sendResetPasswordTokenStatus
+);
+router.post(
+  "/reset-password",
+  validatePassword,
+  validate,
+  isValidPassResetToken,
+  resetPassword
+);
 router.get("/is-auth", isAuth, (req, res) => {
   const { user } = req;
   res.json({
@@ -34,18 +47,5 @@ router.get("/is-auth", isAuth, (req, res) => {
     },
   });
 });
-router.post("/forgot-password", forgotPassword);
-router.post(
-  "/verify-pass-reset-token",
-  isValidPasswordResetToken,
-  sendPasswordResetTokenStatus
-);
-router.post(
-  "/reset-password",
-  isValidPasswordResetToken,
-  validatePassword,
-  validate,
-  resetPassword
-);
 
 module.exports = router;

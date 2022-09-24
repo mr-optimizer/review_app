@@ -1,30 +1,35 @@
-const morgan = require("morgan");
-const express = require("express");
-const cors = require("cors");
-const app = express();
-var bodyParser = require('body-parser')
-
 require("express-async-errors");
-require("dotenv").config({ path: "./config/.env" });
-require("./config/db");
-
+const express = require("express");
+const morgan = require("morgan");
+const { errorHandler } = require("./middlewares/error");
+const cors = require("cors");
+require("dotenv").config();
+require("./db");
 const userRouter = require("./routes/user");
 const actorRouter = require("./routes/actor");
+const { handleNotFound } = require("./utils/helper");
 
-const { errorHandler } = require("./middleware/error");
-const { handleNotFound } = require("./utils/Error");
-
-app.use(cors()) //for cors error
-app.use(morgan("dev")); //middleware to log HTTP requests and errors,
+const app = express();
+app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/actor", actorRouter);
-app.use('/*', handleNotFound);
-
+app.use(morgan("dev"));
+app.use("/api/user", userRouter);
+app.use("/api/actor", actorRouter);
+app.use("/*", handleNotFound);
 
 app.use(errorHandler);
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Listening on port ", process.env.PORT);
+// app.post("/sign-in",
+//   (req, res, next) => {
+//     const { email, password } = req.body
+//     if (!email || !password)
+//       return res.json({ error: 'email/ password missing!' })
+//     next()
+//   },
+//   (req, res) => {
+//     res.send("<h1>Hello I am from your backend about</h1>");
+//   });
+
+app.listen(8000, () => {
+  console.log("the port is listening on port 8000");
 });
