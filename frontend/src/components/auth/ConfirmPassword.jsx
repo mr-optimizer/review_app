@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { ImSpinner3 } from "react-icons/im";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { resetPassword, verifyPasswordResetToken } from "../../api/auth";
-import { useNotification } from "../../hooks";
+import { ImSpinner3 } from "react-icons/im";
 import { commonModalClasses } from "../../utils/theme";
 import Container from "../Container";
 import FormContainer from "../form/FormContainer";
 import FormInput from "../form/FormInput";
 import Submit from "../form/Submit";
 import Title from "../form/Title";
+import { resetPassword, verifyPasswordResetToken } from "../../api/auth";
+import { useNotification } from "../../hooks";
 
 export default function ConfirmPassword() {
   const [password, setPassword] = useState({
     one: "",
     two: "",
   });
-  const [isVerifying, setIsVerifying] = useState(true);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -24,8 +24,7 @@ export default function ConfirmPassword() {
   const { updateNotification } = useNotification();
   const navigate = useNavigate();
 
-  // isValid,  !isValid
-
+  // isValid, !isValid
   useEffect(() => {
     isValidToken();
   }, []);

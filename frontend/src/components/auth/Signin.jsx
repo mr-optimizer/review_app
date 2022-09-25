@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth, useNotification } from "../../hooks";
 import { isValidEmail } from "../../utils/helper";
 import { commonModalClasses } from "../../utils/theme";
-
 import Container from "../Container";
 import CustomLink from "../CustomLink";
 import FormContainer from "../form/FormContainer";

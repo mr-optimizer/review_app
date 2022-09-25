@@ -76,7 +76,6 @@ export default function ActorForm({
   }, [initialState]);
 
   const { name, about, gender } = actorInfo;
-
   return (
     <form
       className="dark:bg-primary bg-white p-3 w-[35rem] rounded"

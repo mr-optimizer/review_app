@@ -3,6 +3,11 @@
   appearance: none;
 }
 
+/*For Firefox*/
+.spin-button-none[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .bounce-custom {
   animation: bounce-custom 0.5s;
 }

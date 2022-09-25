@@ -1,13 +1,13 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
-import ConfirmPassword from "./components/auth/ConfirmPassword";
-import EmailVerification from "./components/auth/EmailVerification";
-import ForgetPassword from "./components/auth/ForgetPassword";
+import { Routes, Route } from "react-router-dom";
 import Signin from "./components/auth/Signin";
 import Signup from "./components/auth/Signup";
+import EmailVerification from "./components/auth/EmailVerification";
 import Home from "./components/Home";
-import NotFound from "./components/NotFound";
 import Navbar from "./components/user/Navbar";
+import ForgetPassword from "./components/auth/ForgetPassword";
+import ConfirmPassword from "./components/auth/ConfirmPassword";
+import NotFound from "./components/NotFound";
 import { useAuth } from "./hooks";
 import AdminNavigator from "./navigator/AdminNavigator";
 
@@ -20,7 +20,6 @@ export default function App() {
   return (
     <>
       <Navbar />
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth/signin" element={<Signin />} />

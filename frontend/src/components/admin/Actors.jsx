@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BsPencilSquare, BsTrash } from "react-icons/bs";
-import { deleteActor, getActors } from "../../api/actor";
+import { deleteActor, getActors, searchActor } from "../../api/actor";
 import { useNotification, useSearch } from "../../hooks";
 import AppSearchForm from "../form/AppSearchForm";
-import ConfirmModal from "../modals/ConfirmModal";
-import UpdateActor from "../modals/UpdateActor";
+import ConfirmModal from "../models/ConfirmModal";
+import UpdateActor from "../models/UpdateActor";
 import NextAndPrevButton from "../NextAndPrevButton";
 import NotFoundText from "../NotFoundText";
 
 let currentPageNo = 0;
-const limit = 50;
+const limit = 20;
 
 export default function Actors() {
   const [actors, setActors] = useState([]);
@@ -19,7 +19,6 @@ export default function Actors() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
-
   const { updateNotification } = useNotification();
   const { handleSearch, resetSearch, resultNotFound } = useSearch();
 
@@ -85,13 +84,13 @@ export default function Actors() {
   };
 
   const handleOnDeleteConfirm = async () => {
-    // setBusy(true);
-    // const { error, message } = await deleteActor(selectedProfile.id);
-    // setBusy(false);
-    // if (error) return updateNotification("error", error);
-    // updateNotification("success", message);
-    // hideConfirmModal();
-    // fetchActors(currentPageNo);
+    setBusy(true);
+    const { error, message } = await deleteActor(selectedProfile.id);
+    setBusy(false);
+    if (error) return updateNotification("error", error);
+    updateNotification("success", message);
+    hideConfirmModal();
+    fetchActors(currentPageNo);
   };
 
   const hideConfirmModal = () => setShowConfirmModal(false);
@@ -107,13 +106,13 @@ export default function Actors() {
           <AppSearchForm
             onReset={handleSearchFormReset}
             onSubmit={handleOnSearchSubmit}
-            placeholder="Search Actors.."
+            placeholder="Search Actors..."
             showResetIcon={results.length || resultNotFound}
           />
         </div>
-        <NotFoundText text="Record not found" visible={resultNotFound} />
+        <NotFoundText visible={resultNotFound} text="Record not found" />
 
-        <div className="grid grid-cols-4 gap-5 p-5">
+        <div className="grid grid-cols-4 gap-5">
           {results.length || resultNotFound
             ? results.map((actor) => (
                 <ActorProfile
@@ -133,7 +132,7 @@ export default function Actors() {
               ))}
         </div>
 
-        {results.length && !resultNotFound ? (
+        {!results.length && !resultNotFound ? (
           <NextAndPrevButton
             className="mt-5"
             onNextClick={handleOnNextClick}
@@ -143,9 +142,9 @@ export default function Actors() {
       </div>
 
       <ConfirmModal
+        visible={showConfirmModal}
         title="Are you sure?"
         subtitle="This action will remove this profile permanently!"
-        visible={showConfirmModal}
         busy={busy}
         onConfirm={handleOnDeleteConfirm}
         onCancel={hideConfirmModal}
@@ -173,15 +172,15 @@ const ActorProfile = ({ profile, onEditClick, onDeleteClick }) => {
     setShowOptions(false);
   };
 
-  if (!profile) return null;
-
   const getName = (name) => {
     if (name.length <= acceptedNameLength) return name;
 
     return name.substring(0, acceptedNameLength) + "..";
   };
 
-  const { name, avatar, about = "" } = profile;
+  const { name, about = "", avatar } = profile;
+
+  if (!profile) return null;
 
   return (
     <div className="bg-white shadow dark:shadow dark:bg-secondary rounded h-20 overflow-hidden">
@@ -204,7 +203,6 @@ const ActorProfile = ({ profile, onEditClick, onDeleteClick }) => {
             {about.substring(0, 50)}
           </p>
         </div>
-
         <Options
           onEditClick={onEditClick}
           onDeleteClick={onDeleteClick}

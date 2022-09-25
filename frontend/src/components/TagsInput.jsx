@@ -57,7 +57,7 @@ export default function TagsInput({ name, value, onChange }) {
   }, [value]);
 
   useEffect(() => {
-    input.current.scrollIntoView(false);
+    input.current?.scrollIntoView(false);
   }, [tag]);
 
   return (
@@ -76,7 +76,7 @@ export default function TagsInput({ name, value, onChange }) {
           ref={input}
           type="text"
           id={name}
-          className="h-full flex-grow bg-transparent outline-none dark:text-white text-primary"
+          className="h-full flex-grow bg-transparent outline-none dark:text-white"
           placeholder="Tag one, Tag two"
           value={tag}
           onChange={handleOnChange}
@@ -92,7 +92,7 @@ const Tag = ({ children, onClick }) => {
   return (
     <span className="dark:bg-white bg-primary dark:text-primary text-white flex items-center text-sm px-1 whitespace-nowrap">
       {children}
-      <button type="button" onClick={onClick}>
+      <button onClick={onClick} type="button">
         <AiOutlineClose size={12} />
       </button>
     </span>

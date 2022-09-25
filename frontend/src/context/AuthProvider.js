@@ -29,8 +29,8 @@ export default function AuthProvider({ children }) {
     navigate("/", { replace: true });
     setAuthInfo({
       profile: { ...user },
-      isLoggedIn: true,
       isPending: false,
+      isLoggedIn: true,
       error: "",
     });
 

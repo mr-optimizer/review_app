@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNotification, useSearch } from "../../hooks";
 import { commonInputClasses } from "../../utils/theme";
-import { renderItem } from "../../utils/helper";
 import LiveSearch from "../LiveSearch";
+import { results } from "../admin/MovieForm";
+import { useNotification, useSearch } from "../../hooks";
+import { renderItem } from "../../utils/helper";
 import { searchActor } from "../../api/actor";
-
 // const cast = [{ actor: id, roleAs: "", leadActor: true }];
 const defaultCastInfo = {
   profile: {},
@@ -31,8 +31,7 @@ export default function CastForm({ onSubmit }) {
     setCastInfo({ ...castInfo, profile });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     const { profile, roleAs } = castInfo;
     if (!profile.name)
       return updateNotification("error", "Cast profile is missing!");
@@ -42,7 +41,6 @@ export default function CastForm({ onSubmit }) {
     onSubmit(castInfo);
     setCastInfo({ ...defaultCastInfo, profile: { name: "" } });
     resetSearch();
-    setProfiles([]);
   };
 
   const handleProfileChange = ({ target }) => {
