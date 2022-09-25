@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, forwardRef } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { commonInputClasses } from "../utils/theme";
 
 export default function LiveSearch({
@@ -6,8 +6,8 @@ export default function LiveSearch({
   placeholder = "",
   results = [],
   name,
-  resultContainerStyle,
   selectedResultStyle,
+  resultContainerStyle,
   inputStyle,
   renderItem = null,
   onChange = null,
@@ -15,7 +15,6 @@ export default function LiveSearch({
 }) {
   const [displaySearch, setDisplaySearch] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  const [defaultValue, setDefaultValue] = useState("");
 
   const handleOnFocus = () => {
     if (results.length) setDisplaySearch(true);
@@ -27,7 +26,9 @@ export default function LiveSearch({
   };
 
   const handleOnBlur = () => {
-    closeSearch();
+    setTimeout(() => {
+      closeSearch();
+    }, 100);
   };
 
   const handleSelection = (selectedItem) => {
@@ -39,7 +40,6 @@ export default function LiveSearch({
 
   const handleKeyDown = ({ key }) => {
     let nextCount;
-
     const keys = ["ArrowDown", "ArrowUp", "Enter", "Escape"];
     if (!keys.includes(key)) return;
 
@@ -50,6 +50,7 @@ export default function LiveSearch({
     if (key === "ArrowUp") {
       nextCount = (focusedIndex + results.length - 1) % results.length;
     }
+
     if (key === "Escape") return closeSearch();
 
     if (key === "Enter") return handleSelection(results[focusedIndex]);
@@ -63,27 +64,13 @@ export default function LiveSearch({
       : commonInputClasses + " border-2 rounded p-1 text-lg";
   };
 
-  const handleChange = (e) => {
-    setDefaultValue(e.target.value);
-    onChange && onChange(e);
-  };
-
-  useEffect(() => {
-    setDefaultValue(value);
-  }, [value]);
-
   useEffect(() => {
     if (results.length) return setDisplaySearch(true);
     setDisplaySearch(false);
   }, [results.length]);
 
   return (
-    <div
-      tabIndex={1}
-      onKeyDown={handleKeyDown}
-      onBlur={handleOnBlur}
-      className="relative outline-none"
-    >
+    <div className="relative">
       <input
         type="text"
         id={name}
@@ -91,15 +78,15 @@ export default function LiveSearch({
         className={getInputStyle()}
         placeholder={placeholder}
         onFocus={handleOnFocus}
-        value={defaultValue}
-        onChange={handleChange}
-        // onBlur={handleOnBlur}
-        // onKeyDown={handleKeyDown}
+        onBlur={handleOnBlur}
+        onKeyDown={handleKeyDown}
+        value={value}
+        onChange={onChange}
       />
       <SearchResults
-        results={results}
-        visible={displaySearch}
         focusedIndex={focusedIndex}
+        visible={displaySearch}
+        results={results}
         onSelect={handleSelection}
         renderItem={renderItem}
         resultContainerStyle={resultContainerStyle}
@@ -108,15 +95,6 @@ export default function LiveSearch({
     </div>
   );
 }
-
-// const renderItem = ({ id, name, avatar }) => {
-//   return (
-//     <div className="flex">
-//       <img src={avatar} alt="" />
-//       <p>{name}</p>
-//     </div>
-//   );
-// };
 
 const SearchResults = ({
   visible,
@@ -146,8 +124,10 @@ const SearchResults = ({
             ? selectedResultStyle
             : "dark:bg-dark-subtle bg-light-subtle";
         };
+
         return (
           <ResultCard
+            ref={index === focusedIndex ? resultContainer : null}
             key={index.toString()}
             item={result}
             renderItem={renderItem}
@@ -155,7 +135,7 @@ const SearchResults = ({
             selectedResultStyle={
               index === focusedIndex ? getSelectedClass() : ""
             }
-            onMouseDown={() => onSelect(result)}
+            onClick={() => onSelect(result)}
           />
         );
       })}
@@ -169,7 +149,7 @@ const ResultCard = forwardRef((props, ref) => {
     renderItem,
     resultContainerStyle,
     selectedResultStyle,
-    onMouseDown,
+    onClick,
   } = props;
 
   const getClasses = () => {
@@ -182,7 +162,7 @@ const ResultCard = forwardRef((props, ref) => {
     );
   };
   return (
-    <div onMouseDown={onMouseDown} ref={ref} className={getClasses()}>
+    <div onClick={onClick} ref={ref} className={getClasses()}>
       {renderItem(item)}
     </div>
   );

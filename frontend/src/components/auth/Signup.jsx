@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { createUser } from "../../api/auth";
 import { useAuth, useNotification } from "../../hooks";
 import { isValidEmail } from "../../utils/helper";
@@ -41,7 +42,7 @@ export default function Signup() {
   const { updateNotification } = useNotification();
 
   const handleChange = ({ target }) => {
-    const { name, value } = target;
+    const { value, name } = target;
     setUserInfo({ ...userInfo, [name]: value });
   };
 

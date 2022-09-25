@@ -15,8 +15,12 @@ export const catchError = (error) => {
 
 export const renderItem = (result) => {
   return (
-    <div className="flex rounded overflow-hidden">
-      <img src={result.avatar} alt="" className="w-16 h-16 object-cover" />
+    <div key={result.id} className="flex space-x-2 rounded overflow-hidden">
+      <img
+        src={result.avatar}
+        alt={result.name}
+        className="w-16 h-16 object-cover"
+      />
       <p className="dark:text-white font-semibold">{result.name}</p>
     </div>
   );

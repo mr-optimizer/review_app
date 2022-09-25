@@ -1,8 +1,8 @@
-import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
+import React from "react";
+import { BsTrash, BsPencilSquare, BsBoxArrowUpRight } from "react-icons/bs";
 
-const MovieListItem = ({ movie, onDeleteClick, onEditClick, onOpenClick }) => {
+function MovieListItem({ movie, onDeleteClick, onEditClick, onOpenClick }) {
   const { poster, title, genres = [], status } = movie;
-
   return (
     <table className="w-full border-b">
       <tbody>
@@ -54,6 +54,6 @@ const MovieListItem = ({ movie, onDeleteClick, onEditClick, onOpenClick }) => {
       </tbody>
     </table>
   );
-};
+}
 
 export default MovieListItem;

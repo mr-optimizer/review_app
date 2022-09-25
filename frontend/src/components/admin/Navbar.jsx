@@ -17,6 +17,7 @@ export default function Navbar() {
               <img src="./logo.png" alt="logo" className="h-14 p-2" />
             </Link>
           </li>
+
           <li>
             <NavItem to="/">
               <AiOutlineHome />
@@ -36,6 +37,7 @@ export default function Navbar() {
             </NavItem>
           </li>
         </ul>
+
         <div className="flex flex-col items-start pb-5">
           <span className="font-semibold text-white text-xl">Admin</span>
           <button

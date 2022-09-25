@@ -3,7 +3,7 @@ import { FileUploader } from "react-drag-drop-files";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { uploadMovie, uploadTrailer } from "../../api/movie";
 import { useNotification } from "../../hooks";
-import ModalContainer from "../models/ModalContainer";
+import ModalContainer from "../modals/ModalContainer";
 import MovieForm from "./MovieForm";
 
 export default function MovieUpload({ visible, onClose }) {

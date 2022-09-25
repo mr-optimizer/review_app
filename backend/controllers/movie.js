@@ -63,42 +63,39 @@ exports.createMovie = async (req, res) => {
   }
 
   // uploading poster
-  if (file) {
-    const {
-      secure_url: url,
-      public_id,
-      responsive_breakpoints,
-    } = await cloudinary.uploader.upload(file.path, {
-      transformation: {
-        width: 1280,
-        height: 720,
-      },
-      responsive_breakpoints: {
-        create_derived: true,
-        max_width: 640,
-        max_images: 3,
-      },
-    });
+  const {
+    secure_url: url,
+    public_id,
+    responsive_breakpoints,
+  } = await cloudinary.uploader.upload(file.path, {
+    transformation: {
+      width: 1280,
+      height: 720,
+    },
+    responsive_breakpoints: {
+      create_derived: true,
+      max_width: 640,
+      max_images: 3,
+    },
+  });
 
-    const finalPoster = { url, public_id, responsive: [] };
+  const finalPoster = { url, public_id, responsive: [] };
 
-    const { breakpoints } = responsive_breakpoints[0];
-    if (breakpoints.length) {
-      for (let imgObj of breakpoints) {
-        const { secure_url } = imgObj;
-        finalPoster.responsive.push(secure_url);
-      }
+  const { breakpoints } = responsive_breakpoints[0];
+  if (breakpoints.length) {
+    for (let imgObj of breakpoints) {
+      const { secure_url } = imgObj;
+      finalPoster.responsive.push(secure_url);
     }
-    newMovie.poster = finalPoster;
   }
+
+  newMovie.poster = finalPoster;
 
   await newMovie.save();
 
   res.status(201).json({
-    movie: {
-      id: newMovie._id,
-      title,
-    },
+    id: newMovie._id,
+    title,
   });
 };
 
@@ -207,7 +204,7 @@ exports.updateMovieWithPoster = async (req, res) => {
     movie.writers = writers;
   }
 
-  // update poster
+  // update poster.
   // removing poster from cloud if there is any.
   const posterID = movie.poster?.public_id;
   if (posterID) {
@@ -215,36 +212,36 @@ exports.updateMovieWithPoster = async (req, res) => {
     if (result !== "ok") {
       return sendError(res, "Could not update poster at the moment!");
     }
-
-    // uploading poster
-    const {
-      secure_url: url,
-      public_id,
-      responsive_breakpoints,
-    } = await cloudinary.uploader.upload(req.file.path, {
-      transformation: {
-        width: 1280,
-        height: 720,
-      },
-      responsive_breakpoints: {
-        create_derived: true,
-        max_width: 640,
-        max_images: 3,
-      },
-    });
-
-    const finalPoster = { url, public_id, responsive: [] };
-
-    const { breakpoints } = responsive_breakpoints[0];
-    if (breakpoints.length) {
-      for (let imgObj of breakpoints) {
-        const { secure_url } = imgObj;
-        finalPoster.responsive.push(secure_url);
-      }
-    }
-
-    movie.poster = finalPoster;
   }
+
+  // uploading poster
+  const {
+    secure_url: url,
+    public_id,
+    responsive_breakpoints,
+  } = await cloudinary.uploader.upload(req.file.path, {
+    transformation: {
+      width: 1280,
+      height: 720,
+    },
+    responsive_breakpoints: {
+      create_derived: true,
+      max_width: 640,
+      max_images: 3,
+    },
+  });
+
+  const finalPoster = { url, public_id, responsive: [] };
+
+  const { breakpoints } = responsive_breakpoints[0];
+  if (breakpoints.length) {
+    for (let imgObj of breakpoints) {
+      const { secure_url } = imgObj;
+      finalPoster.responsive.push(secure_url);
+    }
+  }
+
+  movie.poster = finalPoster;
 
   await movie.save();
 
@@ -281,4 +278,23 @@ exports.removeMovie = async (req, res) => {
   await Movie.findByIdAndDelete(movieId);
 
   res.json({ message: "Movie removed successfully." });
+};
+
+exports.getMovies = async (req, res) => {
+  const { pageNo = 0, limit = 10 } = req.query;
+
+  const movies = await Movie.find({})
+    .sort({ createdAt: -1 })
+    .skip(parseInt(pageNo) * parseInt(limit))
+    .limit(parseInt(limit));
+
+  const results = movies.map((movie) => ({
+    id: movie._id,
+    title: movie.title,
+    poster: movie.poster?.url,
+    genres: movie.genres,
+    status: movie.status,
+  }));
+
+  res.json({ movies: results });
 };

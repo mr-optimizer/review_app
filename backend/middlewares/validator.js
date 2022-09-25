@@ -89,9 +89,9 @@ exports.validateMovie = [
           throw Error(
             "Only accepted boolean value inside leadActor inside cast!"
           );
-      }
 
-      return true;
+        return true;
+      }
     }),
   check("trailer")
     .isObject()

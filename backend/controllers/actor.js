@@ -1,10 +1,10 @@
-const { isValidObjectId } = require("mongoose");
 const Actor = require("../models/actor");
 const {
   sendError,
   uploadImageToCloud,
   formatActor,
 } = require("../utils/helper");
+const { isValidObjectId } = require("mongoose");
 const cloudinary = require("../cloud");
 
 exports.createActor = async (req, res) => {
@@ -12,13 +12,12 @@ exports.createActor = async (req, res) => {
   const { file } = req;
 
   const newActor = new Actor({ name, about, gender });
-
   if (file) {
     const { url, public_id } = await uploadImageToCloud(file.path);
     newActor.avatar = { url, public_id };
   }
   await newActor.save();
-  res.status(201).json(formatActor(newActor));
+  res.status(201).json({ actor: formatActor(newActor) });
 };
 
 // update
@@ -58,7 +57,7 @@ exports.updateActor = async (req, res) => {
 
   await actor.save();
 
-  res.status(201).json(formatActor(actor));
+  res.status(201).json({ actor: formatActor(actor) });
 };
 
 exports.removeActor = async (req, res) => {
@@ -85,12 +84,15 @@ exports.removeActor = async (req, res) => {
 };
 
 exports.searchActor = async (req, res) => {
-  const { query } = req;
-  const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+  const { name } = req.query;
+  // const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+  if (!name.trim()) return sendError(res, "Invalid request!");
+  const result = await Actor.find({
+    name: { $regex: name, $options: "i" },
+  });
 
   const actors = result.map((actor) => formatActor(actor));
-
-  res.json(actors);
+  res.json({ results: actors });
 };
 
 exports.getLatestActors = async (req, res) => {
@@ -109,4 +111,18 @@ exports.getSingleActor = async (req, res) => {
   const actor = await Actor.findById(id);
   if (!actor) return sendError(res, "Invalid request, actor not found!", 404);
   res.json(formatActor(actor));
+};
+
+exports.getActors = async (req, res) => {
+  const { pageNo, limit } = req.query;
+
+  const actors = await Actor.find({})
+    .sort({ createdAt: -1 })
+    .skip(parseInt(pageNo) * parseInt(limit))
+    .limit(parseInt(limit));
+
+  const profiles = actors.map((actor) => formatActor(actor));
+  res.json({
+    profiles,
+  });
 };

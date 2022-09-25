@@ -29,7 +29,7 @@ export default function PosterSelector({
             alt=""
           />
         ) : (
-          <PosterUI className={className} label={lable} />
+          <PosterUI label={lable} className={className} />
         )}
       </label>
     </div>

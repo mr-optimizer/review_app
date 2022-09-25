@@ -12,6 +12,7 @@ import Title from "../form/Title";
 
 export default function ForgetPassword() {
   const [email, setEmail] = useState("");
+
   const { updateNotification } = useNotification();
 
   const handleChange = ({ target }) => {
@@ -27,7 +28,7 @@ export default function ForgetPassword() {
     const { error, message } = await forgetPassword(email);
     if (error) return updateNotification("error", error);
 
-    updateNotification("error", message);
+    updateNotification("success", message);
   };
 
   return (

@@ -6,7 +6,7 @@ import Header from "../components/admin/Header";
 import Movies from "../components/admin/Movies";
 import MovieUpload from "../components/admin/MovieUpload";
 import Navbar from "../components/admin/Navbar";
-import ActorUpload from "../components/models/ActorUpload";
+import ActorUpload from "../components/modals/ActorUpload";
 import NotFound from "../components/NotFound";
 
 export default function AdminNavigator() {
@@ -33,7 +33,7 @@ export default function AdminNavigator() {
     <>
       <div className="flex dark:bg-primary bg-white">
         <Navbar />
-        <div className="flex-1 p-2 max-w-screen-xl">
+        <div className="flex-1 max-w-screen-xl">
           <Header
             onAddMovieClick={displayMovieUploadModal}
             onAddActorClick={displayActorUploadModal}

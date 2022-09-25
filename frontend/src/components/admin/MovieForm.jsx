@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import { useNotification } from "../../hooks";
+import { commonInputClasses } from "../../utils/theme";
+import Submit from "../form/Submit";
+import TagsInput from "../TagsInput";
+import WritersModal from "../modals/WritersModal";
+import CastForm from "../form/CastForm";
+import CastModal from "../modals/CastModal";
+import PosterSelector from "../PosterSelector";
+import GenresSelector from "../GenresSelector";
+import GenresModal from "../modals/GenresModal";
+import Selector from "../Selector";
 import {
   languageOptions,
   statusOptions,
   typeOptions,
 } from "../../utils/options";
-import { commonInputClasses } from "../../utils/theme";
-import { validateMovie } from "../../utils/validator";
-import DirectorSelector from "../DirectorSelector";
-import CastForm from "../form/CastForm";
-import Submit from "../form/Submit";
-import GenresSelector from "../GenresSelector";
 import Label from "../Label";
-import LabelWithBadge from "../LabelWithBadge";
-import CastModal from "../models/CastModal";
-import GenresModal from "../models/GenresModal";
-import WritersModal from "../models/WritersModal";
-import PosterSelector from "../PosterSelector";
-import Selector from "../Selector";
-import TagsInput from "../TagsInput";
-import ViewAllBtn from "../ViewAllButton";
+import DirectorSelector from "../DirectorSelector";
 import WriterSelector from "../WriterSelector";
+import ViewAllBtn from "../ViewAllButton";
+import LabelWithBadge from "../LabelWithBadge";
+import { validateMovie } from "../../utils/validator";
 
 const defaultMovieInfo = {
   title: "",
@@ -37,19 +37,19 @@ const defaultMovieInfo = {
   status: "",
 };
 
-export default function MovieForm({ busy, onSubmit }) {
+export default function MovieForm({ onSubmit, busy }) {
   const [movieInfo, setMovieInfo] = useState({ ...defaultMovieInfo });
   const [showWritersModal, setShowWritersModal] = useState(false);
   const [showCastModal, setShowCastModal] = useState(false);
-  const [selectedPosterForUI, setSelectedPosterForUI] = useState("");
   const [showGenresModal, setShowGenresModal] = useState(false);
+  const [selectedPosterForUI, setSelectedPosterForUI] = useState("");
 
   const { updateNotification } = useNotification();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const { error } = validateMovie(movieInfo);
-    if (error) return updateNotification("error", error);
+    if (error) updateNotification("error", error);
 
     // cast, tags, genres, writers
     const { tags, genres, cast, writers, director, poster } = movieInfo;
@@ -133,6 +133,7 @@ export default function MovieForm({ busy, onSubmit }) {
         );
       }
     }
+
     setMovieInfo({ ...movieInfo, writers: [...writers, profile] });
   };
 
@@ -180,24 +181,22 @@ export default function MovieForm({ busy, onSubmit }) {
     writers,
     cast,
     tags,
-    releseDate,
     genres,
     type,
     language,
     status,
   } = movieInfo;
-
   return (
     <>
-      <div onSubmit={handleSubmit} className="flex space-x-3">
+      <div className="flex space-x-3">
         <div className="w-[70%] space-y-5">
           <div>
             <Label htmlFor="title">Title</Label>
             <input
-              id="title"
               value={title}
               onChange={handleChange}
               name="title"
+              id="title"
               type="text"
               className={
                 commonInputClasses + " border-b-2 font-semibold text-xl"
@@ -214,7 +213,7 @@ export default function MovieForm({ busy, onSubmit }) {
               name="storyLine"
               id="storyLine"
               className={commonInputClasses + " border-b-2 resize-none h-24"}
-              placeholder="Movie storyline..."
+              placeholder="Movie story line..."
             ></textarea>
           </div>
 
@@ -225,7 +224,7 @@ export default function MovieForm({ busy, onSubmit }) {
 
           <DirectorSelector onSelect={updateDirector} />
 
-          <div className="">
+          <div>
             <div className="flex justify-between">
               <LabelWithBadge badge={writers.length} htmlFor="writers">
                 Writers
@@ -257,7 +256,6 @@ export default function MovieForm({ busy, onSubmit }) {
             className={commonInputClasses + " border-2 rounded p-1 w-auto"}
             onChange={handleChange}
             name="releseDate"
-            value={releseDate}
           />
 
           <Submit
@@ -272,8 +270,8 @@ export default function MovieForm({ busy, onSubmit }) {
             name="poster"
             onChange={handleChange}
             selectedPoster={selectedPosterForUI}
-            lable="Select poster"
             accept="image/jpg, image/jpeg, image/png"
+            lable="Select poster"
           />
           <GenresSelector badge={genres.length} onClick={displayGenresModal} />
 
@@ -303,11 +301,10 @@ export default function MovieForm({ busy, onSubmit }) {
 
       <WritersModal
         onClose={hideWritersModal}
-        visible={showWritersModal}
         profiles={writers}
+        visible={showWritersModal}
         onRemoveClick={handleWriterRemove}
       />
-
       <CastModal
         onClose={hideCastModal}
         casts={cast}

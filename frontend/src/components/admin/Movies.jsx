@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getMovies } from "../../api/movie";
 import { useNotification } from "../../hooks";
 import MovieListItem from "../MovieListItem";
 import NextAndPrevButton from "../NextAndPrevButton";
 
-const limit = 10;
+let limit = 10;
 let currentPageNo = 0;
 
 export default function Movies() {
   const [movies, setMovies] = useState([]);
-  const [reachedToEnd, setReachedToEnd] = useState(false);
+  const [reachedToEnd, setReachedToEnd] = useState([]);
 
   const { updateNotification } = useNotification();
 
@@ -40,7 +40,7 @@ export default function Movies() {
   };
 
   useEffect(() => {
-    fetchMovies(currentPageNo);
+    fetchMovies();
   }, []);
 
   return (
@@ -48,7 +48,6 @@ export default function Movies() {
       {movies.map((movie) => {
         return <MovieListItem key={movie.id} movie={movie} />;
       })}
-
       <NextAndPrevButton
         className="mt-5"
         onNextClick={handleOnNextClick}
