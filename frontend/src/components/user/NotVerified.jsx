@@ -15,7 +15,7 @@ export default function NotVerified() {
   };
 
   return (
-    <Container>
+    <div>
       {isLoggedIn && !isVerified ? (
         <p className="text-lg text-center bg-blue-50 p-2">
           It looks like you haven't verified your account,{" "}
@@ -27,6 +27,6 @@ export default function NotVerified() {
           </button>
         </p>
       ) : null}
-    </Container>
+    </div>
   );
 }

@@ -66,6 +66,59 @@
   background: rgb(143, 190, 245);
 }
 
+/* for our slide show */
+.slide-in-from-right {
+  animation: slideInFromRight 0.5s ease-in;
+}
+
+.slide-out-to-left {
+  animation: slideOutToLeft 0.5s ease-in;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.5s ease-in;
+}
+
+.slide-out-to-right {
+  animation: slideOutToRight 0.5s ease-in;
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
