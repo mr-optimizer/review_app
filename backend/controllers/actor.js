@@ -10,6 +10,7 @@ const cloudinary = require("../cloud");
 exports.createActor = async (req, res) => {
   const { name, about, gender } = req.body;
   const { file } = req;
+
   const newActor = new Actor({ name, about, gender });
 
   if (file) {
