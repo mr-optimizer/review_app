@@ -30,7 +30,10 @@ export default function LiveSearch({
   };
 
   const handleSelection = (selectedItem) => {
-    onSelect(selectedItem);
+    if (selectedItem) {
+      onSelect(selectedItem);
+      closeSearch();
+    }
   };
 
   const handleKeyDown = ({ key }) => {
@@ -45,6 +48,7 @@ export default function LiveSearch({
     if (key === "ArrowUp") {
       nextCount = (focusedIndex + results.length - 1) % results.length;
     }
+    if (key === "Escape") return closeSearch();
 
     if (key === "Enter") return handleSelection(results[focusedIndex]);
 
