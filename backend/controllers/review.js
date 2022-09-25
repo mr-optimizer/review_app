@@ -8,6 +8,9 @@ exports.addReview = async (req, res) => {
   const { content, rating } = req.body;
   const userId = req.user._id;
 
+  if (!req.user.isVerified)
+    return sendError(res, "Please verify you email first!");
+
   if (!isValidObjectId(movieId)) return sendError(res, "Invalid Movie!");
 
   const movie = await Movie.findOne({ _id: movieId, status: "public" });
@@ -90,7 +93,7 @@ exports.getReviewsByMovie = async (req, res) => {
         select: "name",
       },
     })
-    .select("reviews");
+    .select("reviews title");
 
   const reviews = movie.reviews.map((r) => {
     const { owner, content, rating, _id: reviewID } = r;
@@ -107,5 +110,5 @@ exports.getReviewsByMovie = async (req, res) => {
     };
   });
 
-  res.json({ reviews });
+  res.json({ movie: { reviews, title: movie.title } });
 };
