@@ -6,7 +6,9 @@ const commonPosterUI =
 export default function PosterSelector({
   name,
   accept,
+  lable,
   selectedPoster,
+  className,
   onChange,
 }) {
   return (
@@ -22,24 +24,22 @@ export default function PosterSelector({
       <label htmlFor={name}>
         {selectedPoster ? (
           <img
-            className={commonPosterUI + " object-cover"}
+            className={commonPosterUI + " object-cover " + className}
             src={selectedPoster}
             alt=""
           />
         ) : (
-          <PosterUI />
+          <PosterUI className={className} label={lable} />
         )}
       </label>
     </div>
   );
 }
 
-const PosterUI = () => {
+const PosterUI = ({ label, className }) => {
   return (
-    <div className={commonPosterUI}>
-      <span className="dark:text-dark-subtle text-light-subtle">
-        Select Poster
-      </span>
+    <div className={commonPosterUI + " " + className}>
+      <span className="dark:text-dark-subtle text-light-subtle">{label}</span>
     </div>
   );
 };
