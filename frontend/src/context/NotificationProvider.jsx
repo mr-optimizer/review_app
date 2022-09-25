@@ -1,12 +1,15 @@
 import React, { createContext, useState } from "react";
 
 export const NotificationContext = createContext();
+
 let timeoutId;
-export const NotificationProvider = ({ children }) => {
+export default function NotificationProvider({ children }) {
   const [notification, setNotification] = useState("");
-  const [classes, setClasses] = useState();
+  const [classes, setClasses] = useState("");
+
   const updateNotification = (type, value) => {
-    if(timeoutId)clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
+
     switch (type) {
       case "error":
         setClasses("bg-red-500");
@@ -21,21 +24,19 @@ export const NotificationProvider = ({ children }) => {
         setClasses("bg-red-500");
     }
     setNotification(value);
+
     timeoutId = setTimeout(() => {
       setNotification("");
     }, 3000);
   };
+
   return (
     <NotificationContext.Provider value={{ updateNotification }}>
       {children}
       {notification && (
-        <div className="fixed left-1/2 -translate-x-1/2 top-24 bg-red-400 rounded shadow-md shadow-gray-400">
-          <div
-            className={
-              classes + " bounce-custom rounded shadow-md shadow-gray-400"
-            }
-          >
-            <p className=" text-white px-4 py-2 font-semibold">
+        <div className="fixed left-1/2 -translate-x-1/2 top-24 ">
+          <div className="bounce-custom shadow-md shadow-gray-400 rounded">
+            <p className={classes + " text-white px-4 py-2 font-semibold"}>
               {notification}
             </p>
           </div>
@@ -43,4 +44,4 @@ export const NotificationProvider = ({ children }) => {
       )}
     </NotificationContext.Provider>
   );
-};
+}

@@ -1,17 +1,17 @@
-import React from "react";
-import ReactDOM from "react-dom";
-
-import "./index.css";
-// import './style.css';
+import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { ContextProvider } from "./context/Index";
 
-ReactDOM.render(
+import "./index.css";
+import ContextProviders from "./context";
+
+const rootElement = document.getElementById("root");
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(
   <BrowserRouter>
-    <ContextProvider>
+    <ContextProviders>
       <App />
-    </ContextProvider>
-  </BrowserRouter>,
-  document.getElementById("root")
+    </ContextProviders>
+  </BrowserRouter>
 );
