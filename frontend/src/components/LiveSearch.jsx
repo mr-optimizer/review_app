@@ -39,6 +39,7 @@ export default function LiveSearch({
 
   const handleKeyDown = ({ key }) => {
     let nextCount;
+
     const keys = ["ArrowDown", "ArrowUp", "Enter", "Escape"];
     if (!keys.includes(key)) return;
 
@@ -68,8 +69,13 @@ export default function LiveSearch({
   };
 
   useEffect(() => {
-    if (value) setDefaultValue(value);
+    setDefaultValue(value);
   }, [value]);
+
+  useEffect(() => {
+    if (results.length) return setDisplaySearch(true);
+    setDisplaySearch(false);
+  }, [results.length]);
 
   return (
     <div
