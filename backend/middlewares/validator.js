@@ -89,36 +89,42 @@ exports.validateMovie = [
           throw Error(
             "Only accepted boolean value inside leadActor inside cast!"
           );
-
-        return true;
       }
+
+      return true;
     }),
-  check("trailer")
-    .isObject()
-    .withMessage("trailer must be an object with url and public_id")
-    .custom(({ url, public_id }) => {
-      try {
-        const result = new URL(url);
-        if (!result.protocol.includes("http"))
-          throw Error("Trailer url is invalid!");
 
-        const arr = url.split("/");
-        const publicId = arr[arr.length - 1].split(".")[0];
-
-        if (public_id !== publicId)
-          throw Error("Trailer public_id is invalid!");
-
-        return true;
-      } catch (error) {
-        throw Error("Trailer url is invalid!");
-      }
-    }),
   // check("poster").custom((_, { req }) => {
   //   if (!req.file) throw Error("Poster file is missing!");
 
   //   return true;
   // }),
 ];
+
+exports.validateTrailer = check("trailer")
+  .isObject()
+  .withMessage("trailer must be an object with url and public_id")
+  .custom(({ url, public_id }) => {
+    try {
+      const result = new URL(url);
+      if (!result.protocol.includes("http"))
+        throw Error("Trailer url is invalid!");
+
+      const arr = url.split("/");
+      const publicId = arr[arr.length - 1].split(".")[0];
+
+      if (public_id !== publicId) throw Error("Trailer public_id is invalid!");
+
+      return true;
+    } catch (error) {
+      throw Error("Trailer url is invalid!");
+    }
+  });
+
+exports.validateRatings = check(
+  "rating",
+  "Rating must be a number between 0 and 10."
+).isFloat({ min: 0, max: 10 });
 
 exports.validate = (req, res, next) => {
   const error = validationResult(req).array();

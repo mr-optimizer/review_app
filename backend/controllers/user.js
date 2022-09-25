@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const EmailVerificationToken = require("../models/emailVerificationToken");
-const PasswordResetToken = require("../models/passwordResetToken");
 const { isValidObjectId } = require("mongoose");
 const { generateOTP, generateMailTransporter } = require("../utils/mail");
 const { sendError, generateRandomByte } = require("../utils/helper");
+const PasswordResetToken = require("../models/passwordResetToken");
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
@@ -36,22 +36,24 @@ exports.create = async (req, res) => {
     to: newUser.email,
     subject: "Email Verification",
     html: `
-      <p>Your verification OTP</p>
+      <p>You verification OTP</p>
       <h1>${OTP}</h1>
-
     `,
   });
 
   res.status(201).json({
-    message:
-      "Please verify your email. OTP has been sent to your email accont!",
+    user: {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+    },
   });
 };
 
 exports.verifyEmail = async (req, res) => {
   const { userId, OTP } = req.body;
 
-  if (!isValidObjectId(userId)) return res.json({ error: "Invalid user!" });
+  if (!isValidObjectId(userId)) return sendError(res, "Invalid user!");
 
   const user = await User.findById(userId);
   if (!user) return sendError(res, "user not found!", 404);
@@ -77,7 +79,19 @@ exports.verifyEmail = async (req, res) => {
     subject: "Welcome Email",
     html: "<h1>Welcome to our app and thanks for choosing us.</h1>",
   });
-  res.json({ message: "Your email is verified." });
+
+  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+  res.json({
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      token: jwtToken,
+      isVerified: user.isVerified,
+      role: user.role,
+    },
+    message: "Your email is verified.",
+  });
 };
 
 exports.resendEmailVerificationToken = async (req, res) => {
@@ -118,9 +132,8 @@ exports.resendEmailVerificationToken = async (req, res) => {
     to: user.email,
     subject: "Email Verification",
     html: `
-      <p>Your verification OTP</p>
+      <p>You verification OTP</p>
       <h1>${OTP}</h1>
-
     `,
   });
 
@@ -151,7 +164,7 @@ exports.forgetPassword = async (req, res) => {
   });
   await newPasswordResetToken.save();
 
-  const resetPasswordUrl = `http://localhost:3000/reset-password?token=${token}&id=${user._id}`;
+  const resetPasswordUrl = `http://localhost:3000/auth/reset-password?token=${token}&id=${user._id}`;
 
   const transport = generateMailTransporter();
 
@@ -162,7 +175,6 @@ exports.forgetPassword = async (req, res) => {
     html: `
       <p>Click here to reset password</p>
       <a href='${resetPasswordUrl}'>Change Password</a>
-
     `,
   });
 
@@ -207,7 +219,7 @@ exports.resetPassword = async (req, res) => {
   });
 };
 
-exports.signIn = async (req, res, next) => {
+exports.signIn = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -216,9 +228,11 @@ exports.signIn = async (req, res, next) => {
   const matched = await user.comparePassword(password);
   if (!matched) return sendError(res, "Email/Password mismatch!");
 
-  const { _id, name, role } = user;
+  const { _id, name, role, isVerified } = user;
 
   const jwtToken = jwt.sign({ userId: _id }, process.env.JWT_SECRET);
 
-  res.json({ user: { id: _id, name, email, role, token: jwtToken } });
+  res.json({
+    user: { id: _id, name, email, role, token: jwtToken, isVerified },
+  });
 };

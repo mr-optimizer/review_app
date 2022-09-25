@@ -1,10 +1,10 @@
+const { isValidObjectId } = require("mongoose");
 const Actor = require("../models/actor");
 const {
   sendError,
   uploadImageToCloud,
   formatActor,
 } = require("../utils/helper");
-const { isValidObjectId } = require("mongoose");
 const cloudinary = require("../cloud");
 
 exports.createActor = async (req, res) => {
@@ -12,6 +12,7 @@ exports.createActor = async (req, res) => {
   const { file } = req;
 
   const newActor = new Actor({ name, about, gender });
+
   if (file) {
     const { url, public_id } = await uploadImageToCloud(file.path);
     newActor.avatar = { url, public_id };
