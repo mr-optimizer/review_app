@@ -17,8 +17,8 @@ export default function HeroSlideshow() {
 
   const { updateNotification } = useNotification();
 
-  const fetchLatestUploads = async () => {
-    const { error, movies } = await getLatestUploads();
+  const fetchLatestUploads = async (signal) => {
+    const { error, movies } = await getLatestUploads(signal);
     if (error) return updateNotification("error", error);
 
     setSlides([...movies]);
@@ -92,7 +92,8 @@ export default function HeroSlideshow() {
   };
 
   useEffect(() => {
-    fetchLatestUploads();
+    const ac = new AbortController();
+    fetchLatestUploads(ac.signal);
     document.addEventListener("visibilitychange", handleOnVisibilityChange);
 
     return () => {
@@ -101,6 +102,7 @@ export default function HeroSlideshow() {
         "visibilitychange",
         handleOnVisibilityChange
       );
+      ac.abort();
     };
   }, []);
 
@@ -187,7 +189,7 @@ const Slide = forwardRef((props, ref) => {
         <img className="aspect-video object-cover" src={src} alt="" />
       ) : null}
       {title ? (
-        <div className="absolute inset-0 flex flex-col justify-end py-3 bg-gradient-to-t from-white dark:from-primary">
+        <div className="absolute inset-0 flex flex-col justify-end py-3 bg-gradient-to-t from-white via-transparent dark:from-primary dark:via-transparent">
           <h1 className="font-semibold text-4xl dark:text-highlight-dark text-highlight">
             {title}
           </h1>
