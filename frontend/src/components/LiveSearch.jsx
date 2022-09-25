@@ -5,6 +5,7 @@ export default function LiveSearch({
   value = "",
   placeholder = "",
   results = [],
+  name,
   resultContainerStyle,
   selectedResultStyle,
   inputStyle,
@@ -65,6 +66,8 @@ export default function LiveSearch({
     >
       <input
         type="text"
+        id={name}
+        name={name}
         className={getInputStyle()}
         placeholder={placeholder}
         onFocus={handleOnFocus}
@@ -116,7 +119,7 @@ const SearchResults = ({
   if (!visible) return null;
 
   return (
-    <div className="absolute right-0 left-0 top-10 bg-white dark:bg-secondary shadow-md p-2 max-h-64 space-y-2 mt-1 overflow-auto custom-scroll-bar">
+    <div className="absolute z-50 right-0 left-0 top-10 bg-white dark:bg-secondary shadow-md p-2 max-h-64 space-y-2 mt-1 overflow-auto custom-scroll-bar">
       {results.map((result, index) => {
         const getSelectedClass = () => {
           return selectedResultStyle
@@ -125,7 +128,7 @@ const SearchResults = ({
         };
         return (
           <ResultCard
-            key={result.id}
+            key={index.toString()}
             item={result}
             renderItem={renderItem}
             resultContainerStyle={resultContainerStyle}
