@@ -219,10 +219,11 @@ exports.updateMovie = async (req, res) => {
   if (file) {
     // removing poster from cloud if there is any.
     const posterID = movie.poster?.public_id;
+    console.log(posterID);
     if (posterID) {
       const { result } = await cloudinary.uploader.destroy(posterID);
       if (result !== "ok") {
-        return sendError(res, "Cou ld not update poster at the moment!");
+        return sendError(res, "Could not update poster at the moment!");
       }
 
       // uploading poster

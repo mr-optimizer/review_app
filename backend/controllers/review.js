@@ -1,7 +1,7 @@
 const { isValidObjectId } = require("mongoose");
 const Movie = require("../models/movie");
 const Review = require("../models/review");
-const { sendError } = require("../utils/helper");
+const { sendError, getAverageRatings } = require("../utils/helper");
 
 exports.addReview = async (req, res) => {
   const { movieId } = req.params;
@@ -35,7 +35,9 @@ exports.addReview = async (req, res) => {
   // saving new review
   await newReview.save();
 
-  res.json({ message: "Your review has been added." });
+  const reviews = await getAverageRatings(movie._id);
+
+  res.json({ message: "Your review has been added.", reviews });
 };
 
 exports.updateReview = async (req, res) => {
