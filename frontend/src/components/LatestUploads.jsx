@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { deleteMovie, getMovieForUpdate, getMovies } from "../api/movie";
-import { useMovies, useNotification } from "../hooks";
-import ConfirmModal from "./models/ConfirmModal";
-import UpdateMovie from "./models/UpdateMovie";
+import React, {  useEffect } from "react";
+// import { deleteMovie, getMovieForUpdate, getMovies } from "../api/movie";
+import { useMovies } from "../hooks";
+// import ConfirmModal from "./models/ConfirmModal";
+// import UpdateMovie from "./models/UpdateMovie";
 import MovieListItem from "./MovieListItem";
 
-const pageNo = 0;
-const limit = 5;
+// const pageNo = 0;
+// const limit = 5;
 
 export default function LatestUploads() {
   // const [movies, setMovies] = useState([]);
@@ -67,7 +67,7 @@ export default function LatestUploads() {
 
   useEffect(() => {
     fetchLatestUploads();
-  }, []);
+  }, [fetchLatestUploads]);
 
   return (
     <>
